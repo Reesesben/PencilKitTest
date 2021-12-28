@@ -16,8 +16,6 @@ class ViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserv
     @IBOutlet var canvasView: PKCanvasView!
     
     //MARK: - Properties
-    let canvasWidth: CGFloat = 768
-    let canvasOverscrollHeight: CGFloat = 500
     let toolPicker = PKToolPicker()
     
     var drawing = PKDrawing()
@@ -39,13 +37,12 @@ class ViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserv
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        let canvasScale = canvasView.bounds.width / canvasWidth
-        canvasView.minimumZoomScale = canvasScale
-        canvasView.maximumZoomScale = canvasScale
-        canvasView.zoomScale = canvasScale
-        
-        canvasView.contentOffset = CGPoint(x: 0, y: -canvasView.adjustedContentInset.top)
+        //zoom out amount 1 or less
+        canvasView.minimumZoomScale = 1
+        //zoom in amount 1 or more
+        canvasView.maximumZoomScale = 5
+        //Set current zoom
+        canvasView.zoomScale = 1
     }
     
 
@@ -63,11 +60,21 @@ class ViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserv
                 PHAssetChangeRequest.creationRequestForAsset(from: image!)
             }) { sucess, error in
                 if let error = error {
-                    let displayError = UIAlertController(title: "Error", message: "Error saving image to photos", preferredStyle: .alert)
-                    let okay = UIAlertAction(title: "Okay", style: .default)
-                    displayError.addAction(okay)
-                    self.present(displayError, animated: true, completion: nil)
-                    print("Error in \(#function) : \(error.localizedDescription) \n---\n \(error)")
+                    DispatchQueue.main.async {
+                        let displayError = UIAlertController(title: "Error", message: "Error saving image to photos, please check permissions in privacy settings", preferredStyle: .alert)
+                        let okay = UIAlertAction(title: "Okay", style: .default)
+                        displayError.addAction(okay)
+                        self.present(displayError, animated: true, completion: nil)
+                        print("Error in \(#function) : \(error.localizedDescription) \n---\n \(error)")
+                    }
+                }
+                if sucess {
+                    DispatchQueue.main.async {
+                        let message = UIAlertController(title: "Success", message: "Image was successfully saved to photo library", preferredStyle: .alert)
+                        let okay = UIAlertAction(title: "Okay", style: .default)
+                        message.addAction(okay)
+                        self.present(message, animated: true, completion: nil)
+                    }
                 }
             }
         }
