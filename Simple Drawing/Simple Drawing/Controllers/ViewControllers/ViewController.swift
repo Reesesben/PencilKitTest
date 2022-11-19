@@ -61,7 +61,7 @@ class ViewController: UIViewController, PKCanvasViewDelegate, PKToolPickerObserv
             }) { sucess, error in
                 if let error = error {
                     DispatchQueue.main.async {
-                        let displayError = UIAlertController(title: "Error", message: "Error saving image to photos, please check permissions in privacy settings", preferredStyle: .alert)
+                        let displayError = UIAlertController(title: "Error", message: "Error saving image to photos, please check permissions in privacy settings or else", preferredStyle: .alert)
                         let okay = UIAlertAction(title: "Okay", style: .default)
                         displayError.addAction(okay)
                         self.present(displayError, animated: true, completion: nil)
